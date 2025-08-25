@@ -45,54 +45,43 @@ await app.register(fastifySwagger, {
 					tags: ["MCP"],
 					summary: "Executa ferramentas MCP",
 					description:
-						"Este endpoint permite a execução de ferramentas MCP, como <b>search_users</b>, <b>search_user_info</b> e <b>search_debts</b>, para consulta e análise de dados de usuários e dívidas.<br><br>" +
-						"Utilize este endpoint para integrar funcionalidades MCP ao seu fluxo de chatbot, automatizando buscas e retornos de informações relevantes.<br><br>" +
-						"<ul>" +
-						"<li>O MCP Inspector recomenda validar cuidadosamente os parâmetros enviados em <b>tool</b> e <b>input</b>, garantindo que estejam de acordo com o esperado por cada ferramenta.</li>" +
-						"<li>Em caso de dúvidas sobre o formato dos dados ou sobre o funcionamento das ferramentas MCP, consulte a documentação oficial ou utilize o MCP Inspector para simular requisições e analisar respostas.</li>" +
-						"<li>Para acessar as ferramentas, é obrigatório enviar o token JWT no formato Bearer no cabeçalho <b>Authorization</b> (bearerAuth).</li>" +
-						"</ul>",
+						`Este endpoint permite a execução de <b>tools</b> e <b>resources</b> MCP, como <b>search_users</b>, <b>search_user_info</b> e <b>debts://me</b>, para consulta e análise de dados de usuários e dívidas.<br><br>
+						Utilize o campo <b>action</b> para informar o nome da tool ou resource MCP que deseja executar.<br><br>
+						<ul>
+							<li>O MCP Inspector recomenda validar cuidadosamente os parâmetros enviados em <b>action</b> e <b>input</b>, garantindo que estejam de acordo com o esperado por cada operação.</li>
+							<li>Em caso de dúvidas sobre o formato dos dados ou sobre o funcionamento das operações MCP, consulte a documentação oficial ou utilize o MCP Inspector para simular requisições e analisar respostas.</li>
+							<li>Para acessar as operações, é obrigatório enviar o token JWT no formato Bearer no cabeçalho <b>Authorization</b> (bearerAuth).</li>
+						</ul>
+						<br>
+						<b>Tools disponíveis:</b>
+						<ul>
+							<li><b>search_users</b>:<br>
+								Busca informações dos usuários.<br>
+								Parâmetros: <code>{ status: "active" | "inactive" }</code>
+							</li>
+							<li><b>search_user_info</b>:<br>
+								Busca informações do usuário autenticado.<br>
+								Parâmetros: <code>{}</code>
+							</li>
+						</ul>
+						<br>
+						<b>Resources disponíveis:</b>
+						<ul>
+							<li><b>debts://me</b>:<br>
+								Busca dívidas do usuário autenticado.<br>
+								Parâmetros: <code>{}</code><br>
+								Retorna uma lista de dívidas registradas no sistema. Se não houver dívidas, retorna uma lista vazia.
+							</li>
+						</ul>
+					`,
 					security: [{ bearerAuth: [] }],
-					requestBody: {
-						content: {
-							"application/json": {
-								schema: {
-									type: "object",
-									properties: {
-										tool: {
-											type: "string",
-											enum: [
-												"search_users",
-												"search_user_info",
-												"search_debts",
-											],
-											description: "Nome da ferramenta MCP a ser executada.",
-										},
-										input: {
-											type: "object",
-											description:
-												"Parâmetros específicos exigidos pela ferramenta selecionada.",
-										},
-									},
-									required: ["tool", "input"],
-								},
-							},
-						},
-					},
 					responses: {
 						200: {
 							description:
 								"Resultado da execução da ferramenta MCP, retornando um array de objetos com os dados solicitados.",
-							content: {
-								"application/json": {
-									schema: {
-										type: "object",
-										properties: {
-											content: { type: "array", items: { type: "object" } },
-										},
-									},
-								},
-							},
+						},
+						401: {
+							description: "Não autorizado (Bearer token ausente ou inválido)",
 						},
 					},
 				},
@@ -120,6 +109,10 @@ await app.register(fastifySwagger, {
 			{
 				url: `https://node-api-mcp-chatbot.onrender.com`,
 				description: "Produção",
+			},
+			{
+				url: `http://localhost:${env.PORT}`,
+				description: "Desenvolvimento",
 			},
 		],
 		tags: [

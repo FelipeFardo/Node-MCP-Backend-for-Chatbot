@@ -142,3 +142,15 @@ Use `npm run mcp` para abrir o inspector e conectar em `http://localhost:3333/mc
 │   └── mcp/
 └── db/migrations/
 ```
+
+## 📘 OpenAPI/Swagger e exemplos práticos
+
+Documentação interativa: acesse `GET /docs` (Scalar UI sobre o Swagger) para visualizar e testar os endpoints. Ambientes configurados:
+
+- Produção: `https://node-api-mcp-chatbot.onrender.com`
+- Desenvolvimento: `http://localhost:3333`
+
+Autenticação:
+
+- Em `/auth` use o header `apiKey: <APIKEY>` e informe `phoneNumber` para receber um JWT.
+- Para rotas protegidas (`/me` e `/mcp`), envie `Authorization: Bearer <JWT>`.
